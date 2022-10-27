@@ -22,6 +22,9 @@
 	<script type="text/javascript" src="/js/Leaflet.MetricGrid.js"></script>
 	<script type="text/javascript" src="/js/leaflet.wms.js"></script>
 	<script type="text/javascript" src="/js/BasicMap.js"></script>
+	<!-- Fathom - beautiful, simple website analytics -->
+	<script src="https://cdn.usefathom.com/script.js" data-site="OHAJYDDO" defer></script>
+	<!-- / Fathom -->
 	<script>
 		if (navigator && navigator.serviceWorker)
 		{
