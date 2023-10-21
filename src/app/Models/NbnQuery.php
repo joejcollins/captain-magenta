@@ -143,7 +143,6 @@ class NbnQuery implements NbnQueryInterface
 
 		$nbnQueryResponse = $this->callNbnApi($queryUrl);
 		$speciesQueryResult               = new NbnQueryResult();
-		echo(var_dump($nbnQueryResponse));
 		if ($nbnQueryResponse->status === 'OK' )
 		{
 			$recordList         = $nbnQueryResponse->jsonResponse->occurrences;
@@ -214,12 +213,21 @@ class NbnQuery implements NbnQueryInterface
 		// API respects case - upper case all words in search string
 		$siteSearchString = ucwords($siteSearchString);
 		// Replace spaces with "\%20" so the query searches for the whole string
-		$siteSearchString = str_replace(" ", "\%20", $siteSearchString);
+		$siteSearchString = str_replace(" ", "%20", $siteSearchString);
 
 		$nbnRecords           = new NbnRecords('occurrences/search');
 		$nbnRecords->facets   = "location_id";
 
-		$nbnRecords->addExtraQueryParameter('location_id:'.$siteSearchString.'*');
+		if (strpos($siteSearchString, '%20') !== false)
+		{
+			$nbnRecords->addExtraQueryParameter('location_id:'.'%22'. $siteSearchString.'%22');
+		}
+		else
+		{
+			$nbnRecords->addExtraQueryParameter('location_id:'.$siteSearchString.'%2a');
+		}
+
+
 		$nbnRecords->add('species_group:Plants+OR+Bryophytes');
 
 		$queryUrl            = $nbnRecords->getUnpagedQueryString();
@@ -263,7 +271,16 @@ class NbnQuery implements NbnQueryInterface
 	{
 		$nbnRecords = new NbnRecords('occurrences/search');
 
-		$nbnRecords->add('location_id:' . str_replace(" ", "\%20", $siteName)); // Use "\ " instead of spaces to search only for species matching whole site name
+		$siteName = str_replace(" ", "%20", $siteName);
+
+		if (strpos($siteName, '%20') !== false)
+		{
+			$nbnRecords->add('location_id:'.'%22'. $siteName.'%22');
+		}
+		else
+		{
+			$nbnRecords->add('location_id:'.$siteName.'%2a');
+		}
 
 		$speciesGroup = ucfirst($speciesGroup);
 		if ($speciesGroup=== "Plants")
